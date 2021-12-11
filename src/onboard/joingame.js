@@ -33,9 +33,8 @@ const JoinGame = (props) => {
      */
     const { gameid } = useParams()
     JoinGameRoom(gameid, props.userName, props.isCreator)
-    return <div>
-        <h1 style = {{textAlign: "center"}}>Welcome to Chess with Friend!</h1>
-        <h3 style = {{textAlign: "center"}}>Made with ❤️ by <a href = 'https://jackhe.codes/' target = '_blank'>Jack He</a>. Subscribe to my <a href = 'https://www.youtube.com/channel/UC9xFO-llZ2ontatfj9LtLxw' target = '_blank'>YouTube channel</a>. Follow me on <a href = 'https://www.instagram.com/jack_he_hd/?hl=en' target = '_blank'>Instagram</a>.</h3>
+    return <div style={{ height:"120px", width: "100px" }}>
+        <img src="../images/2.png" className="logo-img" height={70} width={200} alt="Logo" />
     </div>
 }
 

@@ -328,7 +328,7 @@ const ChessGameWrapper = (props) => {
           </div>
         ) : (
           <div>
-            <h1
+            <h4
               style={{
                 textAlign: "center",
                 marginTop: String(window.innerHeight / 8) + "px",
@@ -336,7 +336,7 @@ const ChessGameWrapper = (props) => {
             >
               Hey <strong>{props.myUserName}</strong>, copy and paste the URL
               below to send to your friend:
-            </h1>
+            </h4>
             <textarea
               style={{ marginLeft: String((window.innerWidth / 2) - 290) + "px", marginTop: "30" + "px", width: "580px", height: "30px"}}
               onFocus={(event) => {
@@ -348,10 +348,10 @@ const ChessGameWrapper = (props) => {
               </textarea>
             <br></br>
 
-            <h1 style={{ textAlign: "center", marginTop: "100px" }}>
+            <h4 style={{ textAlign: "center", marginTop: "100px" }}>
               {" "}
               Waiting for other opponent to join the game...{" "}
-            </h1>
+            </h4>
           </div>
         )}
       </React.Fragment>

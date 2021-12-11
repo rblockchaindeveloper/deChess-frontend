@@ -10,32 +10,7 @@ import Web3Provider from './Web3Provider';
 import Connect from './Connect';
 import Web3 from 'web3'
 const contractData = require('./contractData')
-
-/*
- *  Frontend flow: 
- * 
- * 1. user first opens this app in the browser. 
- * 2. a screen appears asking the user to send their friend their game URL to start the game.
- * 3. the user sends their friend their game URL
- * 4. the user clicks the 'start' button and waits for the other player to join. 
- * 5. As soon as the other player joins, the game starts. 
- * 
- * 
- * Other player flow:
- * 1. user gets the link sent by their friend
- * 2. user clicks on the link and it redirects to their game. If the 'host' has not yet 
- *    clicked the 'start' button yet, the user will wait for when the host clicks the start button.  
- *    If the host decides to leave before they click on the "start" button, the user will be notified
- *    that the host has ended the session. 
- * 3. Once the host clicks the start button or the start button was already clicked on
- *    before, that's when the game starts. 
- * Onboarding screen =====> Game start. 
- * 
- * Every time a user opens our site from the '/' path, a new game instance is automatically created
- * on the back-end. We should generate the uuid on the frontend, send the request with the uuid
- * as a part of the body of the request. If any player leaves, then the other player wins automatically.  
- * 
- */
+const val = '1';
 
 
 function App() {
@@ -55,7 +30,6 @@ function App() {
     setWeb3(web3)
   }
 
-  const val = '2';
   
 
 
@@ -80,7 +54,9 @@ function App() {
             }).send({
               value: web3.utils.toWei(val),
               from: accounts[0]
-            })
+            }).on('receipt', function(receipt){
+              console.log(receipt.contractAddress) // contains the new contract address
+           })
         }
       })
 

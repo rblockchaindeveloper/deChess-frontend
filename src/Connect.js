@@ -20,8 +20,8 @@ const Connect = ({ children }) => {
   return active ?
     <>{children}</> :
     (
-      <button type="button" onClick={() => activateWeb3()}>
-        Connect
+      <button className='btn btn-primary' type="button" onClick={() => activateWeb3()}>
+        Connect to Metamask
       </button>
     )
 }
