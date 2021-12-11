@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import JoinRoom from './onboard/joinroom'
 import { ColorContext } from './context/colorcontext'
 import Onboard from './onboard/onboard'
 import JoinGame from './onboard/joingame'
 import ChessGame from './chess/ui/chessgame'
+
+import Web3Provider from './Web3Provider';
+import Connect from './Connect';
+import Web3 from 'web3'
+const contractData = require('./contractData')
+
 /*
  *  Frontend flow: 
  * 
@@ -35,6 +41,7 @@ import ChessGame from './chess/ui/chessgame'
 function App() {
 
   const [didRedirect, setDidRedirect] = React.useState(false)
+  const [web3, setWeb3] = useState('')
 
   const playerDidRedirect = React.useCallback(() => {
     setDidRedirect(true)
@@ -44,27 +51,81 @@ function App() {
     setDidRedirect(false)
   }, [])
 
+  const onWeb3Connect = (web3) => {
+    setWeb3(web3)
+  }
+  useEffect(() => {
+    if (didRedirect && web3) {
+      web3.eth.getAccounts((err, accounts) => {
+        if (err) {
+          console.error(err)
+        } else {
+          console.log(accounts[0])
+          web3.eth.personal.unlockAccount(accounts[0],"0xf888fffcd358ae84768fbe7c5ad58c278cdbccfa562132610f88059b7fc5ed1e").then(()=>{
+            console.log("UNLOCKED")
+            let Contract = new web3.eth.Contract(contractData.abi,null,{
+              from:accounts[0],
+              value: web3.utils.toWei('2'),
+              data: contractData.bytecode.object,
+              gas: 4712388,
+            })
+            console.log(Contract)
+            Contract.deploy({
+              data: contractData.bytecode.object,
+            }).send({
+              from: accounts[0]
+            })
+            .on('error', function(error){ 
+              console.error(error)
+             })
+            .on('transactionHash', function(transactionHash){ 
+              console.log(transactionHash,"transactionHash")
+             })
+            .on('receipt', function(receipt){
+               console.log(receipt.contractAddress) // contains the new contract address
+            })
+            .on('confirmation', function(confirmationNumber, receipt){
+              console.log(receipt,"receipt")
+            })
+            .then(function(newContractInstance){
+                console.log(newContractInstance.options.address) // instance with the new contract address
+            });
+          }).catch(err=>{
+            console.log(err)
+          })
+        }
+      })
+
+      
+    }
+  }, [didRedirect])
+
   const [userName, setUserName] = React.useState('')
 
   return (
-    <ColorContext.Provider value = {{didRedirect: didRedirect, playerDidRedirect: playerDidRedirect, playerDidNotRedirect: playerDidNotRedirect}}>
-      <Router>
-        <Switch>
-          <Route path = "/" exact>
-            <Onboard setUserName = {setUserName}/>
-          </Route>
-          <Route path = "/game/:gameid" exact>
-            {didRedirect ? 
-              <React.Fragment>
-                    <JoinGame userName = {userName} isCreator = {true} />
-                    <ChessGame myUserName = {userName} />
-              </React.Fragment> 
-              :
-              <JoinRoom />}
-          </Route>
-          <Redirect to = "/" />
-        </Switch>
-      </Router>
+    <ColorContext.Provider value={{ didRedirect: didRedirect, playerDidRedirect: playerDidRedirect, playerDidNotRedirect: playerDidNotRedirect }}>
+      <Web3Provider>
+        <Connect>
+          <Router>
+            <Switch>
+              <Route path="/" exact>
+                <Onboard setUserName={setUserName} onWeb3Connect={onWeb3Connect} />
+              </Route>
+              <Route path="/game/:gameid" exact>
+                {didRedirect ?
+                  <React.Fragment>
+                    <JoinGame userName={userName} isCreator={true} />
+                    <ChessGame myUserName={userName} />
+                  </React.Fragment>
+                  :
+                  <JoinRoom />
+                }
+              </Route>
+              <Redirect to="/" />
+            </Switch>
+          </Router>
+        </Connect>
+      </Web3Provider>
     </ColorContext.Provider>);
 }
 
