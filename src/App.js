@@ -54,45 +54,33 @@ function App() {
   const onWeb3Connect = (web3) => {
     setWeb3(web3)
   }
+
+  const val = '2';
+  
+
+
   useEffect(() => {
     if (didRedirect && web3) {
       web3.eth.getAccounts((err, accounts) => {
         if (err) {
           console.error(err)
         } else {
-          console.log(accounts[0])
-          web3.eth.personal.unlockAccount(accounts[0],"0xf888fffcd358ae84768fbe7c5ad58c278cdbccfa562132610f88059b7fc5ed1e").then(()=>{
-            console.log("UNLOCKED")
+          console.log(web3.eth)
+          web3.eth.defaultAccount = accounts[0] 
+          console.log(web3.eth)
             let Contract = new web3.eth.Contract(contractData.abi,null,{
               from:accounts[0],
-              value: web3.utils.toWei('2'),
+              value: web3.utils.toWei(val),
               data: contractData.bytecode.object,
               gas: 4712388,
             })
-            console.log(Contract)
-            Contract.deploy({
+            .deploy({
+              value: web3.utils.toWei(val),
               data: contractData.bytecode.object,
             }).send({
+              value: web3.utils.toWei(val),
               from: accounts[0]
             })
-            .on('error', function(error){ 
-              console.error(error)
-             })
-            .on('transactionHash', function(transactionHash){ 
-              console.log(transactionHash,"transactionHash")
-             })
-            .on('receipt', function(receipt){
-               console.log(receipt.contractAddress) // contains the new contract address
-            })
-            .on('confirmation', function(confirmationNumber, receipt){
-              console.log(receipt,"receipt")
-            })
-            .then(function(newContractInstance){
-                console.log(newContractInstance.options.address) // instance with the new contract address
-            });
-          }).catch(err=>{
-            console.log(err)
-          })
         }
       })
 

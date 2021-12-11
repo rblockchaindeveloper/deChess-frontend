@@ -14,9 +14,11 @@ function CreateNewGame(props) {
     const [account, setAccount] = useState('')
 
     useEffect(() => {
-        connector.getProvider().then(provider => {
+        connector.getProvider().then(async provider => {
             // Instantiate web3.js
-            const instance = new Web3(provider)
+            await window.ethereum.enable() //changed
+            const provider1 = window['ethereum'] //changed
+            const instance = new Web3(provider1) //changed
             setWeb3jsInstance(instance)
             props.onWeb3Connect(instance)
         })
