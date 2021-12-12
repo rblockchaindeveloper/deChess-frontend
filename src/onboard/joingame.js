@@ -33,8 +33,8 @@ const JoinGame = (props) => {
      */
     const { gameid } = useParams()
     JoinGameRoom(gameid, props.userName, props.isCreator)
-    return <div style={{ height:"120px", width: "100px" }}>
-        <img src="../images/2.png" className="logo-img" height={70} width={200} alt="Logo" />
+    return <div>
+        
     </div>
 }
 

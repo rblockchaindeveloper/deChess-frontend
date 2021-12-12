@@ -10,6 +10,7 @@ import piecemap from './piecemap'
 import { useParams } from 'react-router-dom'
 import { ColorContext } from '../../context/colorcontext'
 import VideoChatApp from '../../connection/videochat'
+import logo from '../../vector.png'
 // import { useParams } from 'react-router'
 
 const socket = require('../../connection/socket').socket
@@ -39,12 +40,15 @@ class ChessGame extends React.Component {
         playerTurnToMoveIsWhite: true,
         whiteKingInCheck: false,
         blackKingInCheck: false,
+        gameid: '',
+        contractAddress: '',
     }
 
 
     componentDidMount() {
         console.log(this.props.myUserName)
         console.log(this.props.opponentUserName)
+        console.log(this.props.contractAddress)
         // register event listeners
         socket.on('opponent move', move => {
             // move == [pieceId, finalPosition]
@@ -128,7 +132,6 @@ class ChessGame extends React.Component {
         if (blackCheckmated) {
             alert("WHITE WON BY CHECKMATE!")
             let Contract = new this.props.web3.eth.Contract(contractData.abi, this.props.contractAddress)
-            // console.log(Contract)
             this.props.web3.eth.getAccounts((err, accounts) => {
                 if (err) {
                     console.error(err)
@@ -145,12 +148,11 @@ class ChessGame extends React.Component {
         } else if (whiteCheckmated) {
             alert("BLACK WON BY CHECKMATE!")
             let Contract = new this.props.web3.eth.Contract(contractData.abi, this.props.contractAddress)
-            console.log(Contract)
             this.props.web3.eth.getAccounts((err, accounts) => {
                 if (err) {
                     console.error(err)
                 } else {
-                    Contract.methods.verifyPlayerBalance().send({
+                    Contract.methods.verifyPlayerBalance().call({
                         from: accounts[0], //get account address of player
                         gas: 4712388,
                     }).then((res) => {
@@ -289,6 +291,8 @@ const ChessGameWrapper = (props) => {
      *      - socketId 1
      */
 
+
+
     // get the gameId from the URL here and pass it to the chessGame component as a prop. 
     const domainName = 'http://localhost:3000'
     const color = React.useContext(ColorContext)
@@ -350,6 +354,7 @@ const ChessGameWrapper = (props) => {
 
     return (
         <React.Fragment>
+            <div style={{ height: "100vh" }}>
             {opponentDidJoinTheGame ? (
                 <div>
                     <h4> Opponent: {opponentUserName} </h4>
@@ -358,8 +363,6 @@ const ChessGameWrapper = (props) => {
                             playAudio={play}
                             gameId={gameid}
                             color={color.didRedirect}
-                            web3={props.web3}
-                            contractAddress={contractAddress}
                         />
                         <VideoChatApp
                             mySocketId={socket.id}
@@ -375,33 +378,38 @@ const ChessGameWrapper = (props) => {
                     <h1 style={{ textAlign: "center", marginTop: "200px" }}> :( </h1>
                 </div>
             ) : (
-                <div>
-                    <h4
-                        style={{
-                            textAlign: "center",
-                            marginTop: String(window.innerHeight / 8) + "px",
-                        }}
-                    >
-                        Hey <strong>{props.myUserName}</strong>, copy and paste the URL
+                        <div> 
+                            {/* <img src={logo} style={{ width: "%" }} /> */}
+                            <div>
+
+                                <h4
+                                    style={{
+                                        textAlign: "center",
+                                        marginTop: String(window.innerHeight / 8) + "px",
+                                    }}
+                                >
+                                    Hey <strong>{props.myUserName}</strong>, copy and paste the URL
                         below to send to your friend:
                     </h4>
-                    <textarea
-                        style={{ marginLeft: String((window.innerWidth / 2) - 290) + "px", marginTop: "30" + "px", width: "580px", height: "30px" }}
-                        onFocus={(event) => {
-                            console.log('sd')
-                            event.target.select()
-                        }}
-                        value={`${domainName}/game/${gameid}/${contractAddress}`}
-                        type="text">
-                    </textarea>
-                    <br></br>
+                                <textarea
+                                    style={{ marginLeft: String((window.innerWidth / 2) - 290) + "px", marginTop: "30" + "px", width: "580px", height: "30px" }}
+                                    onFocus={(event) => {
+                                        console.log('sd')
+                                        event.target.select()
+                                    }}
+                                    value={`${domainName}/game/${gameid}/${contractAddress}`}
+                                    type="text">
+                                </textarea>
+                                <br></br>
 
-                    <h4 style={{ textAlign: "center", marginTop: "100px" }}>
-                        {" "}
+                                <h4 style={{ textAlign: "center", marginTop: "100px" }}>
+                                    {" "}
                         Waiting for other opponent to join the game...{" "}
-                    </h4>
-                </div>
-            )}
+                                </h4>
+                            </div>
+                        </div>
+                    )}
+                    </div>
         </React.Fragment>
     );
 };
