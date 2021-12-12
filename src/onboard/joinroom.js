@@ -18,6 +18,7 @@ function JoinRoom() {
     const { gameid, contractAddress } = useParams()
     const { active, connector } = useWeb3React()
     const [web3jsInstance, setWeb3jsInstance] = useState(null)
+    const [account, setAccount] = useState('')
 
     console.log(gameid, contractAddress)
 
@@ -34,13 +35,21 @@ function JoinRoom() {
         if (!web3jsInstance) return
         console.log("Web3 Contract For Second Player")
         let Contract = new web3jsInstance.eth.Contract(contractData.abi, contractAddress)
-        Contract.methods.setupPlayer2().send({
-            from:'0x128a8f7f6eea4DB2296e87305ae52DEe60963848',
-            value: web3jsInstance.utils.toWei(val),
-            gas: 4712388,
-        }).then((res) => {
-            console.log(res)
-         });
+        web3jsInstance.eth.getAccounts((err, accounts) => {
+            if (err) {
+                console.error(err)
+            } else {
+                setAccount(accounts[0])
+                Contract.methods.setupPlayer2().send({
+                    from: accounts[0],
+                    value: web3jsInstance.utils.toWei(val),
+                    gas: 4712388,
+                }).then((res) => {
+                    console.log(res)
+                 });
+            }
+        })
+        
     }, [web3jsInstance])
     const typingUserName = (e) => {
         // grab the input text from the field from the DOM 
