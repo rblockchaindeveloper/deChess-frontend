@@ -47,11 +47,7 @@ class ChessGame extends React.Component {
     componentDidMount() {
         console.log(this.props.myUserName)
         console.log(this.props.opponentUserName)
-        const { gameid, contractAddress } = useParams()
-        console.log(contractAddress)
-        this.setState({
-            contractAddress: contractAddress
-        })
+        console.log(this.props.contractAddress)
         // register event listeners
         socket.on('opponent move', move => {
             // move == [pieceId, finalPosition]
@@ -134,7 +130,7 @@ class ChessGame extends React.Component {
 
         if (blackCheckmated) {
             alert("WHITE WON BY CHECKMATE!")
-            let Contract = new this.props.web3.eth.Contract(contractData.abi, this.state.contractAddress)
+            let Contract = new this.props.web3.eth.Contract(contractData.abi, this.props.contractAddress)
             this.props.web3.eth.getAccounts((err, accounts) => {
                 if (err) {
                     console.error(err)
@@ -150,7 +146,7 @@ class ChessGame extends React.Component {
 
         } else if (whiteCheckmated) {
             alert("BLACK WON BY CHECKMATE!")
-            let Contract = new this.props.web3.eth.Contract(contractData.abi, this.state.contractAddress)
+            let Contract = new this.props.web3.eth.Contract(contractData.abi, this.props.contractAddress)
             this.props.web3.eth.getAccounts((err, accounts) => {
                 if (err) {
                     console.error(err)
