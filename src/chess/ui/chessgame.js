@@ -39,15 +39,12 @@ class ChessGame extends React.Component {
         playerTurnToMoveIsWhite: true,
         whiteKingInCheck: false,
         blackKingInCheck: false,
-        gameid: '',
-        contractAddress: '',
     }
 
 
     componentDidMount() {
         console.log(this.props.myUserName)
         console.log(this.props.opponentUserName)
-        console.log(this.props.contractAddress)
         // register event listeners
         socket.on('opponent move', move => {
             // move == [pieceId, finalPosition]
@@ -131,6 +128,7 @@ class ChessGame extends React.Component {
         if (blackCheckmated) {
             alert("WHITE WON BY CHECKMATE!")
             let Contract = new this.props.web3.eth.Contract(contractData.abi, this.props.contractAddress)
+            // console.log(Contract)
             this.props.web3.eth.getAccounts((err, accounts) => {
                 if (err) {
                     console.error(err)
@@ -147,11 +145,12 @@ class ChessGame extends React.Component {
         } else if (whiteCheckmated) {
             alert("BLACK WON BY CHECKMATE!")
             let Contract = new this.props.web3.eth.Contract(contractData.abi, this.props.contractAddress)
+            console.log(Contract)
             this.props.web3.eth.getAccounts((err, accounts) => {
                 if (err) {
                     console.error(err)
                 } else {
-                    Contract.methods.verifyPlayerBalance().call({
+                    Contract.methods.verifyPlayerBalance().send({
                         from: accounts[0], //get account address of player
                         gas: 4712388,
                     }).then((res) => {
@@ -290,8 +289,6 @@ const ChessGameWrapper = (props) => {
      *      - socketId 1
      */
 
-x
-
     // get the gameId from the URL here and pass it to the chessGame component as a prop. 
     const domainName = 'http://localhost:3000'
     const color = React.useContext(ColorContext)
@@ -361,6 +358,8 @@ x
                             playAudio={play}
                             gameId={gameid}
                             color={color.didRedirect}
+                            web3={props.web3}
+                            contractAddress={contractAddress}
                         />
                         <VideoChatApp
                             mySocketId={socket.id}
