@@ -5,6 +5,8 @@ import { useParams } from 'react-router'
 import { useWeb3React } from '@web3-react/core'
 import Web3 from 'web3'
 const contractData = require('../contractData')
+const val = '1';
+
 
 /**
  * Onboard is where we create the game room.
@@ -31,8 +33,14 @@ function JoinRoom() {
     useEffect(() => {
         if (!web3jsInstance) return
         console.log("Web3 Contract For Second Player")
-        let Contract = new web3jsInstance.eth.Contract(contractData.abi)
-        console.log(Contract)
+        let Contract = new web3jsInstance.eth.Contract(contractData.abi, contractAddress)
+        Contract.methods.setupPlayer2().send({
+            from:'0x128a8f7f6eea4DB2296e87305ae52DEe60963848',
+            value: web3jsInstance.utils.toWei(val),
+            gas: 4712388,
+        }).then((res) => {
+            console.log(res)
+         });
     }, [web3jsInstance])
     const typingUserName = (e) => {
         // grab the input text from the field from the DOM 
