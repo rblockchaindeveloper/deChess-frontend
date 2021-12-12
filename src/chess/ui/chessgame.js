@@ -10,15 +10,19 @@ import piecemap from './piecemap'
 import { useParams } from 'react-router-dom'
 import { ColorContext } from '../../context/colorcontext'
 import VideoChatApp from '../../connection/videochat'
+import Web3 from 'web3'
 import logo from '../../vector.png'
 // import { useParams } from 'react-router'
+
 
 const socket = require('../../connection/socket').socket
 const contractData = require('../../contractData')
 
 
-// const provider = window['ethereum']
-// let web3 = new Web3(provider)
+const provider = window['ethereum']
+const web3 = new Web3(provider)
+
+
 // console.log(web3.eth.contracts)
 // let Contract = new web3.eth.Contract(contractData.abi, contractAddress) //fetch contract address from url
 
@@ -67,6 +71,8 @@ class ChessGame extends React.Component {
             draggedPieceTargetId: e.target.attrs.id
         })
     }
+
+
 
 
     movePiece = (selectedId, finalPosition, currentGame, isMyMove) => {
@@ -131,6 +137,7 @@ class ChessGame extends React.Component {
 
         if (blackCheckmated) {
             alert("WHITE WON BY CHECKMATE!")
+            
             let Contract = new this.props.web3.eth.Contract(contractData.abi, this.props.contractAddress)
             this.props.web3.eth.getAccounts((err, accounts) => {
                 if (err) {
@@ -147,19 +154,25 @@ class ChessGame extends React.Component {
 
         } else if (whiteCheckmated) {
             alert("BLACK WON BY CHECKMATE!")
-            let Contract = new this.props.web3.eth.Contract(contractData.abi, this.props.contractAddress)
-            this.props.web3.eth.getAccounts((err, accounts) => {
-                if (err) {
-                    console.error(err)
-                } else {
-                    Contract.methods.verifyPlayerBalance().call({
-                        from: accounts[0], //get account address of player
-                        gas: 4712388,
-                    }).then((res) => {
-                        console.log(res)
-                    });
-                }
-            })
+
+            const getAddress = () =>{
+                return document.URL.split('/')[5];
+            }
+            let Contract = new web3.eth.Contract(contractData.abi, getAddress())
+            console.log(Contract)
+            Contract.methods.verifyPlayerBalance().send({
+                from: '0xAfA8e1bE6875644bAf80a5e9D9c3488f1A33D7f1', //get account address of player
+                gas: 4712388,
+            }).then((res) => {
+                console.log(res)
+            });
+            // this.props.web3.eth.getAccounts((err, accounts) => {
+            //     if (err) {
+            //         console.error(err)
+            //     } else {
+                    
+            //     }
+            // })
         }
     }
 
