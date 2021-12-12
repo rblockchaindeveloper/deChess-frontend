@@ -79,10 +79,10 @@ function App() {
                 {didRedirect ?
                   <React.Fragment>
                     <JoinGame userName={userName} isCreator={true} />
-                    <ChessGame myUserName={userName} />
+                    <ChessGame myUserName={userName} web3={web3}/>
                   </React.Fragment>
                   :
-                  <JoinRoom />
+                  <JoinRoom/>
                 }
               </Route>
               <Redirect to="/" />
