@@ -10,7 +10,7 @@ import piecemap from './piecemap'
 import { useParams } from 'react-router-dom'
 import { ColorContext } from '../../context/colorcontext'
 import VideoChatApp from '../../connection/videochat'
-import { useParams } from 'react-router'
+// import { useParams } from 'react-router'
 
 const socket = require('../../connection/socket').socket
 const contractData = require('../../contractData')
@@ -290,7 +290,7 @@ const ChessGameWrapper = (props) => {
      *      - socketId 1
      */
 
-
+x
 
     // get the gameId from the URL here and pass it to the chessGame component as a prop. 
     const domainName = 'http://localhost:3000'
