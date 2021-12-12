@@ -1,65 +1,71 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import JoinGame from './joingame'
 import ChessGame from '../chess/ui/chessgame'
-
+import { useParams } from 'react-router'
+import { useWeb3React } from '@web3-react/core'
+import Web3 from 'web3'
+const contractData = require('../contractData')
 
 /**
  * Onboard is where we create the game room.
  */
 
-class JoinRoom extends React.Component {
-    state = {
-        didGetUserName: false,
-        inputText: ""
-    }
+function JoinRoom() {
+    const [didGetUserName, setDidGetUserName] = useState(false)
+    const [inputText, setInputText] = useState('')
+    const { gameid, contractAddress } = useParams()
+    const { active, connector } = useWeb3React()
+    const [web3jsInstance, setWeb3jsInstance] = useState(null)
 
-    constructor(props) {
-        super(props);
-        this.textArea = React.createRef();
-    }
+    console.log(gameid, contractAddress)
 
-    typingUserName = () => {
-        // grab the input text from the field from the DOM 
-        const typedText = this.textArea.current.value
-        
-        // set the state with that text
-        this.setState({
-            inputText: typedText
+    useEffect(() => {
+        connector.getProvider().then(async provider => {
+            // Instantiate web3.js
+            await window.ethereum.enable() //changed
+            const provider1 = window['ethereum'] //changed
+            const instance = new Web3(provider1) //changed
+            setWeb3jsInstance(instance)
         })
+    }, [active, connector])
+    useEffect(() => {
+        if (!web3jsInstance) return
+        console.log("Web3 Contract For Second Player")
+        let Contract = new web3jsInstance.eth.Contract(contractData.abi)
+        console.log(Contract)
+    }, [web3jsInstance])
+    const typingUserName = (e) => {
+        // grab the input text from the field from the DOM 
+        const typedText = e.target.value
+        setInputText(typedText)
     }
 
-    render() {
-    
-        return (<React.Fragment>
-            {
-                this.state.didGetUserName ? 
-                <React.Fragment>
-                    <JoinGame userName = {this.state.inputText} isCreator = {false}/>
-                    <ChessGame myUserName = {this.state.inputText}/>
-                </React.Fragment>
-            :
-               <div>
-                    <h1 style={{textAlign: "center", marginTop: String((window.innerHeight / 3)) + "px"}}>Your Username:</h1>
 
-                    <input style={{marginLeft: String((window.innerWidth / 2) - 120) + "px", width: "240px", marginTop: "62px"}} 
-                           ref = {this.textArea}
-                           onInput = {this.typingUserName}></input>
-                           
-                    <button className="btn btn-primary" 
-                        style = {{marginLeft: String((window.innerWidth / 2) - 60) + "px", width: "120px", marginTop: "62px"}} 
-                        disabled = {!(this.state.inputText.length > 0)} 
-                        onClick = {() => {
-                            // When the 'Submit' button gets pressed from the username screen,
-                            // We should send a request to the server to create a new room with
-                            // the uuid we generate here.
-                            this.setState({
-                                didGetUserName: true
-                            })
+    return (<React.Fragment>
+        {
+            didGetUserName ?
+                <React.Fragment>
+                    <JoinGame userName={inputText} isCreator={false} />
+                    <ChessGame myUserName={inputText} />
+                </React.Fragment>
+                :
+                <div>
+                    <h1 style={{ textAlign: "center", marginTop: String((window.innerHeight / 3)) + "px" }}>Your Username:</h1>
+
+                    <input style={{ marginLeft: String((window.innerWidth / 2) - 120) + "px", width: "240px", marginTop: "62px" }}
+                        value={inputText}
+                        onChange={typingUserName}></input>
+
+                    <button className="btn btn-primary"
+                        style={{ marginLeft: String((window.innerWidth / 2) - 60) + "px", width: "120px", marginTop: "62px" }}
+                        disabled={!(inputText.length > 0)}
+                        onClick={() => {
+                            setDidGetUserName(true)
                         }}>Submit</button>
                 </div>
-            }
-            </React.Fragment>)
-    }
+        }
+    </React.Fragment>)
+
 }
 
 export default JoinRoom
