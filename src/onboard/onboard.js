@@ -47,12 +47,11 @@ function CreateNewGame(props) {
         const typedText = e.target.value
         setInputText(typedText)
     }
-
     return (<React.Fragment>
         {
-            didGetUserName ?
+            didGetUserName && props.contractAddress ?
 
-                <Redirect to={"/game/" + gameId}><button className="btn btn-success" style={{ marginLeft: String((window.innerWidth / 2) - 60) + "px", width: "120px" }}>Start Game</button></Redirect>
+                <Redirect to={`/game/${gameId}/${props.contractAddress}`}><button className="btn btn-success" style={{ marginLeft: String((window.innerWidth / 2) - 60) + "px", width: "120px" }}>Start Game</button></Redirect>
 
                 :
                 <div className="big-wrapper light">
@@ -128,7 +127,7 @@ function CreateNewGame(props) {
 const Onboard = (props) => {
     const color = React.useContext(ColorContext)
 
-    return <CreateNewGame didRedirect={color.playerDidRedirect} setUserName={props.setUserName} onWeb3Connect={props.onWeb3Connect}/>
+    return <CreateNewGame didRedirect={color.playerDidRedirect} setUserName={props.setUserName} onWeb3Connect={props.onWeb3Connect} contractAddress={props.contractAddress}/>
 }
 
 

@@ -17,6 +17,7 @@ function App() {
 
   const [didRedirect, setDidRedirect] = React.useState(false)
   const [web3, setWeb3] = useState('')
+  const [contractAddress, setContractAddress] = useState('')
 
   const playerDidRedirect = React.useCallback(() => {
     setDidRedirect(true)
@@ -30,7 +31,7 @@ function App() {
     setWeb3(web3)
   }
 
-  
+
 
 
   useEffect(() => {
@@ -40,29 +41,28 @@ function App() {
           console.error(err)
         } else {
           console.log(web3.eth)
-          web3.eth.defaultAccount = accounts[0] 
+          web3.eth.defaultAccount = accounts[0]
           console.log(web3.eth)
-            let Contract = new web3.eth.Contract(contractData.abi,null,{
-              from:accounts[0],
-              value: web3.utils.toWei(val),
-              data: contractData.bytecode.object,
-              gas: 4712388,
-            })
+          let Contract = new web3.eth.Contract(contractData.abi, null, {
+            from: accounts[0],
+            value: web3.utils.toWei(val),
+            data: contractData.bytecode.object,
+            gas: 4712388,
+          })
             .deploy({
               value: web3.utils.toWei(val),
               data: contractData.bytecode.object,
             }).send({
               value: web3.utils.toWei(val),
               from: accounts[0]
-            }).on('receipt', function(receipt){
+            }).on('receipt', function (receipt) {
+              setContractAddress(receipt.contractAddress)
               console.log(receipt.contractAddress) // contains the new contract address
-           })
-        }
-      })
-
-      
-    }
-  }, [didRedirect])
+            })
+          }
+        })
+      }
+    }, [didRedirect])
 
   const [userName, setUserName] = React.useState('')
 
@@ -73,9 +73,9 @@ function App() {
           <Router>
             <Switch>
               <Route path="/" exact>
-                <Onboard setUserName={setUserName} onWeb3Connect={onWeb3Connect} />
+                <Onboard setUserName={setUserName} onWeb3Connect={onWeb3Connect} contractAddress={contractAddress}/>
               </Route>
-              <Route path="/game/:gameid" exact>
+              <Route path="/game/:gameid/:contractAddress" exact>
                 {didRedirect ?
                   <React.Fragment>
                     <JoinGame userName={userName} isCreator={true} />
