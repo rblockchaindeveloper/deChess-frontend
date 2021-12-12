@@ -19,15 +19,15 @@ const contractData = require('../../contractData')
 const provider = window['ethereum']
 let web3 = new Web3(provider)
 console.log(web3.eth.contracts)
-let Contract = new web3.eth.Contract(contractData.abi, contractAddress) //fetch contract address from url
+// let Contract = new web3.eth.Contract(contractData.abi, contractAddress) //fetch contract address from url
 
 //Call this on checkmate
-Contract.methods.verifyPlayerBalance().call({
-    from:'0x128a8f7f6eea4DB2296e87305ae52DEe60963848', //get account address of player
-    gas: 4712388,
-}).then((res) => {
-    console.log(res)
- });
+// Contract.methods.verifyPlayerBalance().call({
+//     from:'0x128a8f7f6eea4DB2296e87305ae52DEe60963848', //get account address of player
+//     gas: 4712388,
+// }).then((res) => {
+//     console.log(res)
+//  });
 
 
 

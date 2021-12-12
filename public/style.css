@@ -3,11 +3,12 @@
 .light {
   --mainColor: #64bcf4;
   --hoverColor: #5bacdf;
-  --backgroundColor: #f1f8fc;
-  --darkOne: #312f3a;
-  --darkTwo: #45424b;
-  --lightOne: #919191;
-  --lightTwo: #aaa;
+  --backgroundColor: #192e3a;
+  --background-image: linear-gradient(rgb(7, 73, 172), rgb(0, 52, 150));
+  --darkOne: #f3f3f3;
+  --darkTwo: #fff;
+  --lightOne: #ccc;
+  --lightTwo: #e7e3e3;
 }
 
 .dark {
@@ -52,10 +53,12 @@ a {
   min-height: 100vh;
   overflow: hidden;
   background-color: var(--backgroundColor);
+  background-image: linear-gradient(rgb(0, 54, 136), rgb(0, 22, 63));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
+
 
 .container {
   position: relative;
@@ -222,6 +225,7 @@ header .container {
   border: none;
   background: var(--darkTwo);
   color: var(--backgroundColor);
+  background-image: linear-gradient(rgb(7, 73, 172), rgb(0, 52, 150));
   outline: none;
   cursor: pointer;
   height: 39px;

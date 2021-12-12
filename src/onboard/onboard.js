@@ -59,8 +59,8 @@ function CreateNewGame(props) {
         <header>
           <div className="container">
             <div className="logo">
-              <img src="./images/2.png" className="logo-img" height={70} width={200} alt="Logo" />
-              <img src="./images/3.png" className="logo-img hide" height={70} width={200} alt="Logo" />
+              <img src="./images/3.png" className="logo-img" height={70} width={200} alt="Logo" />
+              <img src="./images/2.png" className="logo-img hide" height={70} width={200} alt="Logo" />
             </div>
             <div className="links">
               <ul>
